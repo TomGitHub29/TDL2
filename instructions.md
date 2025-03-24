@@ -186,8 +186,13 @@ Dans les sources du projet, modifiez `wallet.py` en lui rajoutant une méthode `
 Lors de cette deuxième analyse, vous devriez voir de nouveaux indicateurs dans l'onglet "Overview" de SonarCloud.
 
 **Sur l'onglet `Summary` d'une analyse de code, SonarCloud fournit 4 indicateurs. Quels sont-ils et quelles sont leurs utilités ?**
+![1742810231832](image/instructions/1742810231832.png)
+
+- il y a fixed issues, new issues, coverage et duplications
+- Leur utilité est de montrer les erreurs qui ont été corrigées, les nouvelles erreurs, le coverage du code et les duplications de code
 
 **À quoi sert l'indicateur Quality Gate ?**
+Un Quality Gate est un ensemble de conditions booléennes basées sur des mesures. Il permet de savoir immédiatement si votre projet est prêt pour la production. Idéalement, tous les projets devraient utiliser le même Quality Gate. Le statut du Quality Gate de chaque projet est affiché de manière bien visible sur sa page d'accueil.
 
 ## b)
 
