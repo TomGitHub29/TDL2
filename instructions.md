@@ -264,10 +264,17 @@ Notez que la deuxième ligne indique à SonarCloud d'ignorer certains dossiers/f
 Une fois terminé, vous pouvez pousser les modifications sur le repository. L'action GitHub va se lancer, et l'analyse SonarCloud commencera. Vous devriez maintenant avoir accès au coverage. Allez sur l'onglet `Summary` du projet SonarCloud, cliquez sur le bouton `Overall Code` et répondez aux questions suivantes.
 
 **Quelle est la différence entre les sections `New code` et `Overall Code` dans l'onglet Summary ?**
+New code montre les erreurs et les problèmes de qualité de code qui ont été introduits dans le code depuis la dernière analyse. Overall code montre les erreurs et les problèmes de qualité de code dans le code en général.
 
 **Y a-t-il des Code Smells ? Si oui, combien et pour quelle(s) raisons(s) ?**
+j'en vois pas sur le dashboard
 
 **Y a-t-il des Security Hotspots ? Si oui, combien et pour quelle(s) raison(s) ?**
+Oui il y en a 1 : _The "python" image runs with "root" as the default user. Make sure it is safe here_
+Exécuter des conteneurs avec des privilèges administratifs réduit leur sécurité, permettant à tout utilisateur d'exécuter des actions administratives.  
+**Pourquoi** : Cela expose le système à des risques accrus, comme des modifications non autorisées ou des attaques malveillantes.
+
+
 
 ## c)
 
