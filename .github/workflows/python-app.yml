@@ -43,8 +43,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Login to registry 
-      run: echo ${{ secrets.PERSONNAL_TOKEN }} | docker login ghcr.io -u TomGitHub29 --password-stdin
+      run: echo ${{ secrets.PERSONNAL_TOKEN }} | docker login ghcr.io -u tomgithub29 --password-stdin
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ghcr.io/TomGitHub29/tp2:latest
+      run: docker build . --file Dockerfile --tag ghcr.io/tomgithub29/tp2:latest
     - name: Push the image into the registry
-      run: docker push ghcr.io/TomGitHub29/tp2:latest
+      run: docker push ghcr.io/tomgithub29/tp2:latest
