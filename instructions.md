@@ -8,8 +8,6 @@ TP2: Qualité de code et CI/CD"
 colorlinks: true
 ...
 
-
-
 Lors de la réalisation d'un projet, il est important de pouvoir maintenir un code de bonne qualité et de faire en sorte que chacune de vos contributions soit la plus propre possible.
 C'est dans cette optique que les outils de Continous Integration (CI) et de Continous Delivery/Deployment (CD) ont été créés.
 Ensemble, ils forment ce qu'on appelle la CI/CD, un set d'outils pour automatiquement tester, builder et déployer vos projets (entre autres).
@@ -21,16 +19,19 @@ Dans ce TP, nous allons découvrir et utiliser les outils suivants:
 - GitLab CI/CD
 
 # Structure du dossier TP2
+
 ![](media/../medias/structure_dossier.png)
 
 Pour copier-coller facilement les codes des exercices suivants, il est préférable d'utiliser la source de ce fichier (`instructions.md`)
 
 # Exercice 1: GitHub Actions
+
 Le but de cet exercice est de vous faire découvrir les outils CI/CD de GitHub.
 Si vous n'en avez pas déjà un, créez un compte [GitHub](https://github.com/).
 Si besoin, faites les configurations nécessaires (par exemple créer une paire de clés SSH pour pouvoir copier le repo).
 
 ## a)
+
 Une fois connecté sur GitHub, créez un nouveau repository, donnez-lui un nom et laissez les autres paramètres par défaut.
 Veillez à ce que le repository soit bien public et non privé. Dans le cas contraire, vous serez bloqué pour l'exercice 2.
 
@@ -45,6 +46,7 @@ Copiez ensuite le contenu du dossier `TP2` dans le nouveau repo en suivant ces �
 Arrivé à cette étape, vous devriez posséder un repository GitHub dont le contenu est une copie exacte de ce TP.
 
 ## b)
+
 Vous allez créer maintenant votre première action. Rendez-vous sur la page de votre projet GitHub et cliquez sur le menu `Actions`.
 GitHub vous propose diverses actions prédéfinies, choisissez `Python application` et cliquez sur `Configure`.
 Si cette action ne vous est pas directement proposée, vous pouvez utiliser la barre de recherche pour la trouver.
@@ -56,10 +58,20 @@ Analysez son contenu et répondez aux questions.
 
 **Quelles étapes (steps) sont réalisées par cette action ?**
 
+1. Cloner le repository avec `actions/checkout@v4`.
+2. Configurer Python 3.10 avec `actions/setup-python@v3`.
+3. Installer les dépendances nécessaires (pip, flake8, pytest, et celles spécifiées dans `requirements.txt` si le fichier existe).
+4. Effectuer une analyse de linting avec flake8 pour détecter les erreurs de syntaxe et les problèmes de style.
+5. Exécuter les tests unitaires avec pytest.
+
 **Une étape est définie au minimum par 2 éléments, lesquels sont-ils et à quoi servent-ils ?**
 
-**La première étape contient le mot-clé 'with', a quoi sert-il ?**
+1. `name`: Sert à donner un nom descriptif à l'étape pour faciliter sa compréhension et son suivi dans les logs.
+2. `run` ou `uses`: Définit l'action ou la commande à exécuter. `run` exécute une commande shell, tandis que `uses` spécifie une action GitHub prédéfinie.
 
+**La première étape contient le mot-clé 'with', à quoi sert-il ?**
+
+`with` est utilisé pour fournir des paramètres ou des options spécifiques à une action GitHub. Par exemple, dans `actions/setup-python@v3`, il est utilisé pour spécifier la version de Python à installer (`python-version: "3.10"`).
 
 Vous pouvez maintenant créer un nouveau commit et pousser votre nouvelle action dans le repo (Bouton `Start Commit` ou `Commit changes`).
 En retournant dans le menu `Actions`, vous pouvez maintenant voir que le push a déclenché votre action et qu'elle est en train de s'exécuter.
@@ -69,7 +81,8 @@ C'est dans ce dossier que vous trouverez tous les fichiers de configuration de v
 Vous remarquerez dans les logs d'exécution que la commande pytest réussit.
 
 ## c)
-Vous allez maintenant modifier le fichier `python-app.yml` pour créer une action un peu plus complexe. Actuellement, votre fichier ne contient qu'un seul job nommé *build*.
+
+Vous allez maintenant modifier le fichier `python-app.yml` pour créer une action un peu plus complexe. Actuellement, votre fichier ne contient qu'un seul job nommé _build_.
 Un job, dans le cadre des Actions GitHub, est une série d'étapes effectuées par le même runner. Il est possible d'en avoir plusieurs par action et c'est ce que nous allons faire ici.
 
 Ajoutez le morceau de code suivant à la fin du fichier:
@@ -85,7 +98,7 @@ Ajoutez le morceau de code suivant à la fin du fichier:
       run: echo ${{ secrets.PERSONAL_TOKEN }} | docker \
       login ghcr.io -u <username> --password-stdin
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag \ 
+      run: docker build . --file Dockerfile --tag \
       ghcr.io/<username>/tp2:latest
     - name: Push the image into the registry
       run: docker push ghcr.io/<username>/tp2:latest
@@ -129,9 +142,9 @@ Gardez à l'esprit que ceci n'est pas une bonne pratique et qu'il faudrait toujo
 - Toujours depuis la page d'options du package, cliquez sur `Change package visibility` dans la section "Danger zone"
 - Choissiez l'option `Public` et confirmez.
 
-Vous devriez pouvoir télécharger et testez votre image Docker  en utilisant les commandes suivantes:
+Vous devriez pouvoir télécharger et testez votre image Docker en utilisant les commandes suivantes:
 
-``` bash
+```bash
 docker pull ghcr.io/<username>/tp2:latest
 
 docker run --rm -p 80:80 ghcr.io/<username>/tp2:latest
@@ -143,7 +156,8 @@ Puis, en allant à l'adresse `http://127.0.0.1:80`, la page devrait vous renvoye
 Pour vous déconnecter, utilisez la commande `docker logout ghcr.io`.
 
 # Exercice 2: Qualité de code
-Dans le TP1 nous avions vu l'outil *pre-commit* qui permet d'appliquer, entre autres, des règles de formatage à votre code avant de le pousser sur le repo.
+
+Dans le TP1 nous avions vu l'outil _pre-commit_ qui permet d'appliquer, entre autres, des règles de formatage à votre code avant de le pousser sur le repo.
 
 Ici, nous allons plus loin grâce à l'outil SonarQube. Ce dernier permet, en le combinant avec la CI/CD, d'analyser votre code en profondeur une fois un push réalisé.
 Ainsi, vous pouvez rapidement voir si votre code contient des problèmes de maintenabilité, sécurité, etc.
@@ -151,13 +165,14 @@ Ainsi, vous pouvez rapidement voir si votre code contient des problèmes de main
 SonarQube existe aussi en version [SaaS](https://fr.wikipedia.org/wiki/Software_as_a_service), à savoir SonarCloud, qui offre les mêmes capacités sans devoir se soucier de la gestion du serveur. C'est cette version que nous allons utiliser dans ce TP.
 
 ## a)
+
 Pour commencer, il faut lier votre compte GitHub à SonarCloud. Pour ce faire, allez sur [la page de connexion de SonarCloud](https://sonarcloud.io/login) et choisissez la connexion via GitHub.
 SonarCloud va vous guider pour lier votre compte et choisir un repo à analyser. Sélectionnez le repo que vous avez créé pour l'exercice 1.
 Le processus devrait être facile et en quelques minutes vous pourrez voir la 1ère analyse du projet.
 
 Une analyse de code va maintenant se lancer à chaque push et vous pourrez voir les résultats depuis le tableau de bord de SonarCloud.
 
-Après la 1ère analyse, peu d'informations sont montrées. C'est parce que certaines fonctionnalités, comme le *Quality Gate* de SonarCloud, comparent l'évolution des push. Il vous faut donc au minimum deux push pour les voir apparaître.
+Après la 1ère analyse, peu d'informations sont montrées. C'est parce que certaines fonctionnalités, comme le _Quality Gate_ de SonarCloud, comparent l'évolution des push. Il vous faut donc au minimum deux push pour les voir apparaître.
 
 Dans l'onglet `Overview` de SonarCloud, cliquez sur le bouton "Set New Code Definition". Cliquez ensuite sur l'option "Previous version".
 Cette opération sert simplement à indiquer SonarCloud quelle définition on donne à du "nouveau code".
@@ -174,8 +189,8 @@ Lors de cette deuxième analyse, vous devriez voir de nouveaux indicateurs dans 
 
 **À quoi sert l'indicateur Quality Gate ?**
 
-
 ## b)
+
 Par défaut, SonarCloud s'occupe de faire la connexion avec votre projet GitHub automatiquement.
 C'est certes très pratique, mais cette méthode ne permet pas de personnaliser la configuration, ce qui nous prive de certaines fonctionnalités.
 Vous allez donc modifier la méthode de connexion entre GitHub et SonarCloud en y ajoutant l'analyse du coverage.
@@ -186,8 +201,7 @@ Décochez "Automatic Analysis" et **suivez le tutorial "GitHub Actions"**. Les s
 
 Ce dernier vous propose une étape "Create or update a build file" pour créer une nouvelle action. Vous pouvez ignorer cette étape. À la place, vous allez simplement modifier le fichier `python-app.yml` qui existe déjà dans le répertoire de votre projet.
 
-
-Modifiez le job *build* comme suit (les modifications sont commentées pour mieux vous rendre compte des changements):
+Modifiez le job _build_ comme suit (les modifications sont commentées pour mieux vous rendre compte des changements):
 
 ```yaml
 build:
@@ -275,18 +289,14 @@ Analysez le contenu du fichier `.gitlab-ci.yml` et ainsi que le comportement de 
 
 **4. Dans quel ordre les différents jobs s'executent-ils et pourquoi ?**
 
-*Indice: Demandez-vous comment on définit l'ordre d'exécution des jobs en Gitlab CI/CD.*
-
-
+_Indice: Demandez-vous comment on définit l'ordre d'exécution des jobs en Gitlab CI/CD._
 
 **5. Le stage 2 génère une image Docker. Où est-elle stockée et comment pouvez-vous la retrouver ?**
 
-
-
 **6. Le stage 3 génère un wheel Python. Où est-il stocké et comment pouvez-vous le retrouver ?**
 
-
 ## b)
+
 En partant de votre réponse à la dernière question, installez le wheel dans votre environnement Python local.
 La commande pour installer votre package peut se retrouver sur la page GitLab dudit package.
 
